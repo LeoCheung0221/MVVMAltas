@@ -42,7 +42,11 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-7'//没有使用特殊Header，可以不加这行
     api 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    // ViewModel and LiveData 以下两者取其一 解决：Cannot access androidx.lifecycle.HasDefaultViewModelProviderFactory 警告
+//    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    // Java8 support for Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
 
     api 'com.alibaba:arouter-api:1.4.1'
     annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
