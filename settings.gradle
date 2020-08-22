@@ -1,8 +1,9 @@
-include ':core'
-include ':core'
-gradle.ext.includeTufusiBaseSource = true
-if (gradle.ext.includeTufusiBaseSource){
+include ':news'
+include ':network-api'
+include ':common'
+include ':core'//gradle.ext.includeTufusiBaseSource = true
+//if (gradle.ext.includeTufusiBaseSource){
 //    include ':base'
-}
+//}
 include ':app'
 rootProject.name = "MVVMAltas"
