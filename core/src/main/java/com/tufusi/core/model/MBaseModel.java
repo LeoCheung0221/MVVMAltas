@@ -2,13 +2,13 @@ package com.tufusi.core.model;
 
 import androidx.annotation.CallSuper;
 
-import com.tufusi.core.IBaseModelListener;
-
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by 鼠夏目 on 2020/8/22.
@@ -22,6 +22,7 @@ public class MBaseModel<T> {
 
     protected ReferenceQueue<IBaseModelListener> mReferenceQueue;
     protected ConcurrentLinkedQueue<WeakReference<IBaseModelListener>> mWeakReferenceListenerQueue;
+    private CompositeDisposable compositeDisposable;
 
     public MBaseModel(boolean isPaging) {
         this.isPaging = isPaging;
@@ -70,12 +71,12 @@ public class MBaseModel<T> {
             return;
         }
 
-        synchronized (this){
+        synchronized (this) {
             for (WeakReference<IBaseModelListener> weakReference : mWeakReferenceListenerQueue) {
                 IBaseModelListener baseModelListener = weakReference.get();
 
                 // 找到需解绑的监听器，将其移除
-                if (baseModelListener == listener){
+                if (baseModelListener == listener) {
                     mWeakReferenceListenerQueue.remove(weakReference);
                     break;
                 }
@@ -90,5 +91,17 @@ public class MBaseModel<T> {
     @CallSuper
     public void cancel() {
 
+    }
+
+    public void addDisposable(Disposable d) {
+        if (d == null) {
+            return;
+        }
+
+        if (compositeDisposable == null) {
+            compositeDisposable = new CompositeDisposable();
+        }
+
+        compositeDisposable.add(d);
     }
 }

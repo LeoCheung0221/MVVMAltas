@@ -1,4 +1,4 @@
-package com.tufusi.core;
+package com.tufusi.core.model;
 
 import com.tufusi.core.model.MBaseModel;
 import com.tufusi.core.model.PagingResult;

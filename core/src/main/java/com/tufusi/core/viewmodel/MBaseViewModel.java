@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.tufusi.core.IBaseModelListener;
+import com.tufusi.core.model.IBaseModelListener;
 import com.tufusi.core.model.MBaseModel;
 import com.tufusi.core.model.PagingResult;
 

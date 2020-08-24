@@ -2,11 +2,19 @@ package com.tufusi.networklib.base;
 
 import com.tufusi.networklib.env.EnvironmentActivity;
 import com.tufusi.networklib.env.IEnvironment;
+import com.tufusi.networklib.exception.HttpErrorHandle;
 import com.tufusi.networklib.interceptor.XRequestInterceptor;
 import com.tufusi.networklib.interceptor.XResponseInterceptor;
 
 import java.util.HashMap;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -95,6 +103,24 @@ public abstract class AbsNetworkApi implements IEnvironment {
         }
         return mOkHttpClient;
     }
+
+    public <T> ObservableTransformer<T, T> applySchedulers(final Observer<T> observer) {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                Observable<T> observable = upstream.
+                        subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+                observable.map(getAppErrorHandler());
+                observable.subscribe(observer);
+                observable.onErrorResumeNext(new HttpErrorHandle<T>());
+                return observable;
+            }
+        };
+    }
+
+    protected abstract <T> Function<T, T> getAppErrorHandler();
 
     protected abstract Interceptor getInterceptor();
 

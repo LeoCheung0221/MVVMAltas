@@ -1,6 +1,8 @@
 package com.tufusi.networklib;
 
 import com.tufusi.networklib.base.AbsNetworkApi;
+import com.tufusi.networklib.bean.TencentBaseResponse;
+import com.tufusi.networklib.exception.ExceptionHandle;
 import com.tufusi.networklib.utils.TencentUtil;
 
 import java.io.IOException;
@@ -38,11 +40,19 @@ public class TencentNetworkApi extends AbsNetworkApi {
         return getInstance().getRetrofit(api).create(api);
     }
 
-    protected <T> Function<T, T> getApplication() {
+    @Override
+    protected <T> Function<T, T> getAppErrorHandler() {
         return new Function<T, T>() {
             @Override
             public T apply(T response) throws Exception {
-
+                if (response instanceof TencentBaseResponse
+                        && ((TencentBaseResponse) response).showapiResCode != 0) {
+                    ExceptionHandle.ServerException exception = new ExceptionHandle.ServerException();
+                    exception.code = ((TencentBaseResponse) response).showapiResCode;
+                    exception.message = ((TencentBaseResponse) response).showapiResError != null
+                            ? ((TencentBaseResponse) response).showapiResError : "";
+                    throw exception;
+                }
                 return response;
             }
         };
